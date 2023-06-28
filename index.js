@@ -32,36 +32,52 @@ reader.on("data", (packet) => {
   if (clazz) {
     const data = packet.protocol.data(packet.payload, clazz);
 
-    console.log(data.constructor.name);
+    // console.log(data.constructor.name);
     if (data.constructor.name == "CommandAck")
       console.log("Received packet: CommandAck", data);
-
-    if (data.constructor.name == "ParamValue")
-      console.log("Received packet: ParamValue", data);
+    if (data.constructor.name == "GlobalPositionInt")
+      console.log("Position:", data.lat / 1e7, data.lon / 1e7, data.alt / 1000);
     if (data.constructor.name == "MissionAck")
       console.log("Received packet: MissionAck", data);
-    // if (data.constructor.name == "SysStatus")
-    //   console.log("Received packet: Battery", data.batteryRemaining);
-    // if (data.constructor.name == "GlobalPositionInt")
-    //   console.log(
-    //     "Received packet:",
-    //     data.lat / 1e7,
-    //     data.lon / 1e7,
-    //     data.alt / 1000
-    //   );
   }
 });
 
-const command = new common.RequestProtocolVersionCommand();
+// command.targetSystem = 254;
+// command.targetComponent = 1;
 
-const message = new common.MissionClearAll();
-message.targetSystem = 1;
-message.targetComponent = 1;
-message.mission_type = 0;
+// // arm check
+// const command = new common.RunPrearmChecksCommand();
+
+// arm
+const command = new common.ComponentArmDisarmCommand();
+command.arm = 1;
+command.force = 21196;
+
+// takeoff
+const command1 = new common.NavTakeoffCommand();
+command1.pitch = 0;
+command1.yaw = 0;
+
+command1.altitude = 1168;
+command1.latitude = 51.0868047;
+command1.longitude = -114.0596604;
+
+// // flight information message
+// const command = new common.RequestMessageCommand();
+// command.messageId = 264;
+// command.responseTarget = 0;
+
+// // system status message
+// const command = new common.RequestMessageCommand();
+// command.messageId = 1;
+// command.responseTarget = 0;
+
+// // system time  message
+// const command = new common.RequestMessageCommand();
+// command.messageId = 2;
+// command.responseTarget = 0;
 
 port.on("open", async () => {
-  // let res1 = await send(port, command, new MavLinkProtocolV2());
-  // console.log("send1 successfully", res1);
-  let res2 = await send(port, message);
-  console.log("send2 successfully", res2);
+  let res1 = await send(port, command, new MavLinkProtocolV2());
+  let res2 = await send(port, command1, new MavLinkProtocolV2());
 });
