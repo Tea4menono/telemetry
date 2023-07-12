@@ -15,6 +15,8 @@ const port = new SerialPort({
   baudRate: 57600,
 });
 
+// console.log(port);
+
 // constructing a reader that will emit each packet separately
 const reader = port
   .pipe(new MavLinkPacketSplitter())

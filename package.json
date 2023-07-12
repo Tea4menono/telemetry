@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@serialport/list": "^11.0.0",
     "node-mavlink": "^2.0.5",
     "serialport": "^11.0.0"
   }
